@@ -1,34 +1,51 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {useState} from "react"
+import {faker} from "@faker-js/faker"
+
+const hardcodedData = Array(1000).fill(1).map(() => ({
+  id: faker.string.uuid(),
+  value: faker.word.sample(1000),
+  description: faker.lorem.sentence()
+}))
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [inputValue, setInputValue] = useState('')
+  const [shouldShowHints, setShouldShowHints] = useState(false)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div style={{
+      width: '100%',
+      height: '100%',
+      display: 'grid',
+      gridTemplateRows: 'min-content auto'
+    }}>
+      <input
+        autoFocus
+        type="text"
+        value={inputValue}
+        onBlur={() => setShouldShowHints(false)}
+        onChange={(e) => {
+          setShouldShowHints(true)
+          setInputValue(e.target.value)
+        }}
+      />
+      {
+        shouldShowHints && (
+          <ul>
+            {
+              hardcodedData
+                .filter(word => word.value.startsWith(inputValue))
+                .slice(0, 10)
+                .map((word) => (
+                  <li key={word.id}>
+                    {word.value}
+                  </li>
+                ))
+            }
+          </ul>
+        )
+      }
+
+    </div>
   )
 }
 
